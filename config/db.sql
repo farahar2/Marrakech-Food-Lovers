@@ -6,7 +6,7 @@ CREATE TABLE users (
     username   VARCHAR(50)  NOT NULL UNIQUE,
     email      VARCHAR(100) NOT NULL UNIQUE,
     password   VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP   ← virgule supprimée
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP   
 );
 
 CREATE TABLE categories (
@@ -22,9 +22,9 @@ CREATE TABLE recipes (
     title        VARCHAR(150) NOT NULL,
     ingredients  TEXT NOT NULL,
     instructions TEXT NOT NULL,
-    prep_time    SMALLINT UNSIGNED NOT NULL,           ← optimisé
+    prep_time    SMALLINT UNSIGNED NOT NULL,           
     cook_time    SMALLINT UNSIGNED DEFAULT 0,
-    portions     TINYINT UNSIGNED NOT NULL DEFAULT 4,  ← optimisé
+    portions     TINYINT UNSIGNED NOT NULL DEFAULT 4,  
     created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
@@ -40,12 +40,3 @@ CREATE TABLE recipes (
     INDEX idx_category_id (category_id)
 );
 
--- Bonus : table favoris
-CREATE TABLE favorites (
-    user_id   INT UNSIGNED NOT NULL,
-    recipe_id INT UNSIGNED NOT NULL,
-    added_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (user_id, recipe_id),
-    CONSTRAINT fk_fav_user   FOREIGN KEY (user_id)   REFERENCES users(id)   ON DELETE CASCADE,
-    CONSTRAINT fk_fav_recipe FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE
-);
