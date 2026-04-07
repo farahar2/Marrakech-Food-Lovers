@@ -6,7 +6,7 @@ CREATE TABLE users (
     username   VARCHAR(50)  NOT NULL UNIQUE,
     email      VARCHAR(100) NOT NULL UNIQUE,
     password   VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP   ← virgule supprimée
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP   
 );
 
 CREATE TABLE categories (
@@ -22,9 +22,9 @@ CREATE TABLE recipes (
     title        VARCHAR(150) NOT NULL,
     ingredients  TEXT NOT NULL,
     instructions TEXT NOT NULL,
-    prep_time    SMALLINT UNSIGNED NOT NULL,           ← optimisé
+    prep_time    SMALLINT UNSIGNED NOT NULL,           
     cook_time    SMALLINT UNSIGNED DEFAULT 0,
-    portions     TINYINT UNSIGNED NOT NULL DEFAULT 4,  ← optimisé
+    portions     TINYINT UNSIGNED NOT NULL DEFAULT 4,  
     created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
