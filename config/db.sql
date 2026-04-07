@@ -40,12 +40,3 @@ CREATE TABLE recipes (
     INDEX idx_category_id (category_id)
 );
 
--- Bonus : table favoris
-CREATE TABLE favorites (
-    user_id   INT UNSIGNED NOT NULL,
-    recipe_id INT UNSIGNED NOT NULL,
-    added_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (user_id, recipe_id),
-    CONSTRAINT fk_fav_user   FOREIGN KEY (user_id)   REFERENCES users(id)   ON DELETE CASCADE,
-    CONSTRAINT fk_fav_recipe FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE
-);
