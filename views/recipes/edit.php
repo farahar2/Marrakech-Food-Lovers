@@ -14,7 +14,8 @@ require __DIR__ . '/../layouts/header.php';
 // Priorité : données saisies (si erreur de validation) sinon données BDD
 $v = !empty($data) ? $data : $recipe;
 ?>
-
+<link rel="stylesheet" href="/public/css/styles.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <div class="container mt-4" style="max-width: 700px;">
 
     <h1 class="h3 mb-4">✏️ Modifier la recette</h1>

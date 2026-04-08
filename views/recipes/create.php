@@ -11,7 +11,8 @@ if (empty($_SESSION['user_id'])) {
 
 require __DIR__ . '/../layouts/header.php';
 ?>
-
+<link rel="stylesheet" href="/public/css/styles.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <div class="container mt-4" style="max-width: 700px;">
 
     <h1 class="h3 mb-4">➕ Nouvelle recette</h1>

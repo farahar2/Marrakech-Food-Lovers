@@ -5,7 +5,8 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require __DIR__ . '/../layouts/header.php';
 ?>
-
+<link rel="stylesheet" href="/public/css/styles.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <div class="container mt-4" style="max-width: 800px;">
 
     <!-- ── Flash message ──────────────────────────────────────────────── -->
