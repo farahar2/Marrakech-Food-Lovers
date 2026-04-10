@@ -6,7 +6,7 @@ require_once __DIR__ . '/../models/Category.php';
 class RecipeController
 {
     private Recipe   $recipeModel;
-    //private Category $categoryModel;
+    private Category $categoryModel;
 
     public function __construct()
     {
@@ -16,7 +16,7 @@ class RecipeController
         }
 
         $this->recipeModel   = new Recipe();
-        //$this->categoryModel = new Category();
+        $this->categoryModel = new Category();
     }
 
     // List
@@ -44,7 +44,7 @@ class RecipeController
     {
         $this->requireLogin();
 
-        //$categories = $this->categoryModel->getAll();
+        $categories = $this->categoryModel->getAll();
         $errors     = [];
         $data       = [];
 
@@ -82,7 +82,7 @@ class RecipeController
             $this->redirect('recipes');
         }
 
-        //$categories = $this->categoryModel->getAll();
+        $categories = $this->categoryModel->getAll();
         $errors     = [];
         $data       = [];
 
@@ -175,7 +175,7 @@ class RecipeController
     /* Redirige vers une page du projet */
     private function redirect(string $page): never
     {
-        header("Location: index.php?page={$page}");
+        header("Location: index.php?action={$page}");
         exit;
     }
 
@@ -184,7 +184,7 @@ class RecipeController
     {
         if (empty($_SESSION['user_id'])) {
             $this->setFlash('error', 'Connectez-vous pour continuer.');
-            header('Location: index.php?page=login');
+            header('Location: index.php?action=login');
             exit;
         }
     }

@@ -1,86 +1,85 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
 require __DIR__ . '/../layouts/header.php';
 ?>
-<link rel="stylesheet" href="/public/css/styles.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<div class="container mt-4" style="max-width: 800px;">
 
-    <!-- ── Flash message ──────────────────────────────────────────────── -->
-    <?php if (!empty($_SESSION['flash'])): ?>
-        <?php
-            $flash     = $_SESSION['flash'];
-            $alertType = $flash['type'] === 'success' ? 'alert-success' : 'alert-danger';
-            unset($_SESSION['flash']);
-        ?>
-        <div class="alert <?= $alertType ?> alert-dismissible fade show" role="alert">
-            <?= htmlspecialchars($flash['message']) ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php endif; ?>
+<div class="container py-5">
 
-    <a href="index.php?page=recipes" class="btn btn-sm btn-outline-secondary mb-3">
-        ← Retour à la liste
+    <!-- ── Back Link ────────────────────────────────────────────────── -->
+    <a href="index.php?action=recipes" class="text-brand text-decoration-none fw-bold small mb-4 d-inline-block">
+        <i class="bi bi-arrow-left me-1"></i> Retour aux recettes
     </a>
 
-    <div class="card shadow-sm">
-        <div class="card-body">
-
-            <!-- Catégorie + titre -->
-            <?php if ($recipe['category_name']): ?>
-                <span class="badge bg-warning text-dark mb-2">
-                    <?= htmlspecialchars($recipe['category_name']) ?>
-                </span>
-            <?php endif; ?>
-
-            <h1 class="h3 mb-3"><?= htmlspecialchars($recipe['title']) ?></h1>
-
-            <!-- Méta infos -->
-            <ul class="list-inline text-muted small mb-4">
-                <li class="list-inline-item">
-                    ⏱ Prépa : <strong><?= $recipe['prep_time'] ?> min</strong>
-                </li>
-                <?php if ($recipe['cook_time'] > 0): ?>
-                    <li class="list-inline-item">
-                        🔥 Cuisson : <strong><?= $recipe['cook_time'] ?> min</strong>
-                    </li>
+    <!-- ── Recipe Header ────────────────────────────────────────────── -->
+    <div class="row g-5 align-items-center mb-5">
+        <div class="col-lg-5">
+            <div class="recipe-card__img-container bg-soft-green rounded-4 shadow-sm" style="height: 350px; font-size: 8rem; background: #f0f9eb;">
+                🍲
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <div class="recipe-header">
+                <?php if ($recipe['category_name']): ?>
+                    <span class="badge-category mb-3 d-inline-block">
+                        <?= htmlspecialchars($recipe['category_name']) ?>
+                    </span>
                 <?php endif; ?>
-                <li class="list-inline-item">
-                    🍴 <strong><?= $recipe['portions'] ?> portions</strong>
-                </li>
-                <li class="list-inline-item">
-                    👤 Par <strong><?= htmlspecialchars($recipe['username']) ?></strong>
-                </li>
-            </ul>
+                
+                <h1 class="display-5 fw-bold mb-4"><?= htmlspecialchars($recipe['title']) ?></h1>
+                
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                    <div class="recipe-meta-item">
+                        <i class="bi bi-clock-fill text-brand"></i>
+                        <strong><?= $recipe['prep_time'] ?> min</strong> <span class="text-muted">Prépa</span>
+                    </div>
+                    <?php if ($recipe['cook_time'] > 0): ?>
+                        <div class="recipe-meta-item">
+                            <i class="bi bi-fire text-orange"></i>
+                            <strong><?= $recipe['cook_time'] ?> min</strong> <span class="text-muted">Cuisson</span>
+                        </div>
+                    <?php endif; ?>
+                    <div class="recipe-meta-item">
+                        <i class="bi bi-egg-fill text-brand"></i>
+                        <strong><?= $recipe['portions'] ?></strong> <span class="text-muted">Portions</span>
+                    </div>
+                    <div class="recipe-meta-item">
+                        <i class="bi bi-person-fill"></i>
+                        <span class="text-muted">Par</span> <strong><?= htmlspecialchars($recipe['username']) ?></strong>
+                    </div>
+                </div>
 
-            <hr>
+                <?php if (!empty($_SESSION['user_id']) && (int)$_SESSION['user_id'] === (int)$recipe['user_id']): ?>
+                    <div class="d-flex gap-2">
+                        <a href="index.php?action=recipes_edit&id=<?= $recipe['id'] ?>" class="btn btn-outline-secondary btn-sm px-4">Modifier</a>
+                        <form method="POST" action="index.php?action=recipes_delete&id=<?= $recipe['id'] ?>" onsubmit="return confirm('Supprimer cette recette ?')">
+                            <button type="submit" class="btn btn-outline-danger btn-sm px-4">Supprimer</button>
+                        </form>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
 
-            <h5>📋 Ingrédients</h5>
-            <p style="white-space: pre-line;"><?= htmlspecialchars($recipe['ingredients']) ?></p>
-
-            <hr>
-
-            <h5>👨‍🍳 Instructions</h5>
-            <p style="white-space: pre-line;"><?= htmlspecialchars($recipe['instructions']) ?></p>
-
+    <!-- ── Recipe Content ──────────────────────────────────────────── -->
+    <div class="row g-5">
+        <!-- Ingredients -->
+        <div class="col-md-5">
+            <div class="card border-0 shadow-sm p-4 h-100" style="background-color: #fcfdfb;">
+                <h4 class="recipe-section-title mt-0">Ingrédients</h4>
+                <div class="text-seconday lh-lg">
+                    <?= nl2br(htmlspecialchars($recipe['ingredients'])) ?>
+                </div>
+            </div>
         </div>
 
-        <!-- Actions auteur (visible uniquement si connecté ET auteur) -->
-        <?php if (!empty($_SESSION['user_id']) && (int)$_SESSION['user_id'] === (int)$recipe['user_id']): ?>
-            <div class="card-footer d-flex gap-2">
-                <a href="index.php?page=recipes&action=edit&id=<?= $recipe['id'] ?>"
-                   class="btn btn-sm btn-outline-secondary">Modifier</a>
-
-                <form method="POST"
-                      action="index.php?page=recipes&action=delete&id=<?= $recipe['id'] ?>"
-                      onsubmit="return confirm('Supprimer cette recette ?')">
-                    <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
-                </form>
+        <!-- Instructions -->
+        <div class="col-md-7">
+            <div class="p-2">
+                <h4 class="recipe-section-title mt-0">Instructions</h4>
+                <div class="text-secondary lh-lg fs-5" style="white-space: pre-line;">
+                    <?= htmlspecialchars($recipe['instructions']) ?>
+                </div>
             </div>
-        <?php endif; ?>
+        </div>
     </div>
 
 </div>

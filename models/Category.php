@@ -1,5 +1,5 @@
 <?php
-require_once '/../config/Database.php';
+require_once __DIR__ . '/../config/Database.php';
 class Category
 {
     private $conn;
@@ -37,7 +37,7 @@ class Category
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':name', $this->name);
         if ($stmt->execute()) {
-            $this->id = $this->conn->lastInsertId();
+            $this->id =(int)$this->conn->lastInsertId();
             return true;
         }
         return false;
@@ -98,8 +98,7 @@ public function countRecipes()
     $stmt = $this->conn->prepare($query);
     $stmt->bindParam(':category_id', $this->id, PDO::PARAM_INT);
     $stmt->execute();
-    $result = $stmt->fetch();
-    return (int)$result['count'];
+    return (int)$stmt->fetchColumn();
 }
 }
 

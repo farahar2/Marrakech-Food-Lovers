@@ -34,6 +34,8 @@ class CategoryController {
             
             if ($this->model->create()) {
                 $_SESSION['success'] = "✅ Catégorie créée avec succès";
+            } else {
+                $_SESSION['error'] = "❌ Erreur lors de la création";
             }
         } catch (Exception $e) {
             $_SESSION['error'] = $e->getMessage();
@@ -68,12 +70,16 @@ class CategoryController {
         }
         
         try {
-            if ($this->model->getById($_POST['id'])) {
+            if (isset($_POST['id']) && $this->model->getById($_POST['id'])) {
                 $this->model->setName($_POST['name'] ?? '');
                 
                 if ($this->model->update()) {
                     $_SESSION['success'] = "✅ Catégorie modifiée";
+                } else {
+                    $_SESSION['error'] = "❌ Erreur lors de la modification";
                 }
+            } else {
+                $_SESSION['error'] = "❌ Catégorie introuvable";
             }
         } catch (Exception $e) {
             $_SESSION['error'] = $e->getMessage();
@@ -96,6 +102,8 @@ class CategoryController {
                 try {
                     if ($this->model->delete()) {
                         $_SESSION['success'] = "✅ Catégorie supprimée (les recettes liées sont maintenant sans catégorie)";
+                    } else {
+                        $_SESSION['error'] = "❌ Erreur lors de la suppression";
                     }
                 } catch (Exception $e) {
                     $_SESSION['error'] = $e->getMessage();

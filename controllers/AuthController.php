@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../models/User.php';
 
 class AuthController
 {
@@ -52,7 +53,7 @@ class AuthController
         if (User::register($username, $email, $password)) {
             $_SESSION['flash'] = [
                 'type' => 'success', 
-                'msg' => 'Compte créé ! Connectez-vous.'
+                'message' => 'Compte créé ! Connectez-vous.'
             ];
             header('Location: index.php?action=login');
             exit;
@@ -88,7 +89,7 @@ class AuthController
             $_SESSION['username']  = $user['username'];
             $_SESSION['flash']     = [
                 'type' => 'success', 
-                'msg' => 'Bienvenue, ' . $user['username'] . ' !'
+                'message' => 'Bienvenue, ' . $user['username'] . ' !'
             ];
             header('Location: index.php?action=recipes');
             exit;

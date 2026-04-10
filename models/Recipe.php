@@ -8,8 +8,7 @@ class Recipe
 
     public function __construct()
     {
-        $db        = new Database();
-        $this->pdo = $db->pdo;
+        $this->pdo = Database::getInstance()->getConnection();
     }
 
     /* Toutes les recettes avec auteur + catégorie */
