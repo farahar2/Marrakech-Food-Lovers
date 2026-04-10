@@ -1,12 +1,8 @@
 <?php
 
-/**
- * Contrôleur AuthController
- * Orchestre l'inscription et la connexion des utilisateurs.
- */
 class AuthController
 {
-    // ── Inscription ───────────────────────────────────────────
+    // Inscription 
 
     public function showRegister(): void
     {
@@ -22,12 +18,31 @@ class AuthController
         $confirm  = $_POST['confirm']       ?? '';
 
         // Validation
-        if (empty($username))              $errors[] = "Le nom d'utilisateur est requis.";
-        if (strlen($username) < 3)         $errors[] = "Le nom d'utilisateur doit contenir au moins 3 caractères.";
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = "L'adresse email est invalide.";
-        if (strlen($password) < 6)         $errors[] = "Le mot de passe doit contenir au moins 6 caractères.";
-        if ($password !== $confirm)        $errors[] = "Les mots de passe ne correspondent pas.";
-        if (User::emailExists($email))     $errors[] = "Cet email est déjà utilisé.";
+        if (empty($username)) {
+            $errors[] = "Le nom d'utilisateur est requis.";
+        } elseif (strlen($username) < 3) {
+            $errors[] = "Le nom d'utilisateur doit contenir au moins 3 caractères.";
+        }
+
+        if (empty($email)) {
+            $errors[] = "L'email est requis.";
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errors[] = "L'email est invalide.";
+        }
+
+        if (empty($password)) {
+            $errors[] = "Le mot de passe est requis.";
+        } elseif (strlen($password) < 6) {
+            $errors[] = "Le mot de passe doit contenir au moins 6 caractères.";
+        }
+
+        if ($password !== $confirm) {
+            $errors[] = "Les mots de passe ne correspondent pas.";
+        }
+
+        if (empty($errors) && User::emailExists($email)) {
+            $errors[] = "Cet email est déjà utilisé.";
+        }
 
         if (!empty($errors)) {
             require_once 'views/auth/register.php';
@@ -35,7 +50,10 @@ class AuthController
         }
 
         if (User::register($username, $email, $password)) {
-            $_SESSION['flash'] = ['type' => 'success', 'msg' => 'Compte créé ! Connectez-vous.'];
+            $_SESSION['flash'] = [
+                'type' => 'success', 
+                'msg' => 'Compte créé ! Connectez-vous.'
+            ];
             header('Location: index.php?action=login');
             exit;
         }
@@ -44,7 +62,7 @@ class AuthController
         require_once 'views/auth/register.php';
     }
 
-    // ── Connexion ─────────────────────────────────────────────
+    // Connexion 
 
     public function showLogin(): void
     {
@@ -68,7 +86,10 @@ class AuthController
         if ($user) {
             $_SESSION['user_id']   = $user['id'];
             $_SESSION['username']  = $user['username'];
-            $_SESSION['flash']     = ['type' => 'success', 'msg' => 'Bienvenue, ' . $user['username'] . ' !'];
+            $_SESSION['flash']     = [
+                'type' => 'success', 
+                'msg' => 'Bienvenue, ' . $user['username'] . ' !'
+            ];
             header('Location: index.php?action=recipes');
             exit;
         }
@@ -77,10 +98,11 @@ class AuthController
         require_once 'views/auth/login.php';
     }
 
-    // ── Déconnexion ───────────────────────────────────────────
+    //Déconnexion 
 
     public function logout(): void
     {
+        $_SESSION = [];
         session_destroy();
         header('Location: index.php?action=login');
         exit;
