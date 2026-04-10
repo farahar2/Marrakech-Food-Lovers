@@ -10,41 +10,43 @@ class RecipeController
 
     public function __construct()
     {
+        // Démarre la session si pas encore démarrée
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         $this->recipeModel   = new Recipe();
         //$this->categoryModel = new Category();
     }
 
-    // ══════════════════════════════════════════════════════════════════════
-    //  LISTE  –  GET /recipes
-    // ══════════════════════════════════════════════════════════════════════
+    // List
     public function index(): void
     {
         $recipes = $this->recipeModel->getAll();
         require __DIR__ . '/../views/recipes/index.php';
     }
 
-    // ══════════════════════════════════════════════════════════════════════
-    //  DÉTAIL  –  GET /recipes?action=show&id=X
-    // ══════════════════════════════════════════════════════════════════════
+    // Details
     public function show(int $id): void
     {
         $recipe = $this->recipeModel->getById($id);
 
         if (!$recipe) {
-            $this->redirect('recipes', 'Recette introuvable.');
+            $this->setFlash('error', 'Recette introuvable.');
+            $this->redirect('recipes');
         }
 
         require __DIR__ . '/../views/recipes/show.php';
     }
 
-    // ══════════════════════════════════════════════════════════════════════
-    //  CRÉATION  –  GET affiche le form / POST enregistre
-    // ══════════════════════════════════════════════════════════════════════
+    // Create
     public function create(): void
     {
-        //$this->requireLogin();
+        $this->requireLogin();
+
         //$categories = $this->categoryModel->getAll();
         $errors     = [];
+        $data       = [];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data   = $this->sanitizeInput($_POST);
@@ -53,33 +55,36 @@ class RecipeController
             if (empty($errors)) {
                 $data['user_id'] = $_SESSION['user_id'];
                 $this->recipeModel->create($data);
-                $this->redirect('recipes', 'Recette créée avec succès !');
+
+                $this->setFlash('success', 'Recette créée avec succès !');
+                $this->redirect('recipes');
             }
         }
 
         require __DIR__ . '/../views/recipes/create.php';
     }
 
-    // ══════════════════════════════════════════════════════════════════════
-    //  MODIFICATION  –  GET affiche le form / POST enregistre
-    // ══════════════════════════════════════════════════════════════════════
+    // Update
     public function edit(int $id): void
     {
-        //$this->requireLogin();
+        $this->requireLogin();
 
         $recipe = $this->recipeModel->getById($id);
 
         if (!$recipe) {
-            $this->redirect('recipes', 'Recette introuvable.');
+            $this->setFlash('error', 'Recette introuvable.');
+            $this->redirect('recipes');
         }
 
-        // Seul l'auteur peut modifier
-        if ($recipe['user_id'] !== $_SESSION['user_id']) {
-            $this->redirect('recipes', 'Action non autorisée.');
+        // Seul l'auteur peut modifier sa recette
+        if ((int) $recipe['user_id'] !== (int) $_SESSION['user_id']) {
+            $this->setFlash('error', 'Action non autorisée.');
+            $this->redirect('recipes');
         }
 
         //$categories = $this->categoryModel->getAll();
         $errors     = [];
+        $data       = [];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data   = $this->sanitizeInput($_POST);
@@ -87,44 +92,43 @@ class RecipeController
 
             if (empty($errors)) {
                 $this->recipeModel->update($id, $data);
-                $this->redirect('recipes', 'Recette mise à jour !');
+
+                $this->setFlash('success', 'Recette mise à jour !');
+                $this->redirect('recipes');
             }
         }
 
         require __DIR__ . '/../views/recipes/edit.php';
     }
 
-    // ══════════════════════════════════════════════════════════════════════
-    //  SUPPRESSION  –  POST /recipes?action=delete&id=X
-    // ══════════════════════════════════════════════════════════════════════
+    // Delete
     public function delete(int $id): void
     {
-        //$this->requireLogin();
+        $this->requireLogin();
+
+        // La suppression doit venir d'un formulaire POST, jamais d'un lien GET
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('recipes');
+        }
 
         $recipe = $this->recipeModel->getById($id);
 
         if (!$recipe) {
-            $this->redirect('recipes', 'Recette introuvable.');
+            $this->setFlash('error', 'Recette introuvable.');
+            $this->redirect('recipes');
         }
 
-        if ($recipe['user_id'] !== $_SESSION['user_id']) {
-            $this->redirect('recipes', 'Action non autorisée.');
+        if ((int) $recipe['user_id'] !== (int) $_SESSION['user_id']) {
+            $this->setFlash('error', 'Action non autorisée.');
+            $this->redirect('recipes');
         }
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->recipeModel->delete($id);
-            $this->redirect('recipes', 'Recette supprimée.');
-        }
-
-        // Si GET accidentel → retour liste
+        $this->recipeModel->delete($id);
+        $this->setFlash('success', 'Recette supprimée.');
         $this->redirect('recipes');
     }
 
-    // ══════════════════════════════════════════════════════════════════════
-    //  Helpers privés
-    // ══════════════════════════════════════════════════════════════════════
-
-    /** Nettoie les données POST */
+    /* Nettoie les données POST */
     private function sanitizeInput(array $post): array
     {
         return [
@@ -138,7 +142,7 @@ class RecipeController
         ];
     }
 
-    /** Règles de validation simples */
+    /* Retourne un tableau d'erreurs (vide = tout est ok) */
     private function validate(array $data): array
     {
         $errors = [];
@@ -159,22 +163,29 @@ class RecipeController
         return $errors;
     }
 
-    /** Redirige avec un message flash optionnel */
-    private function redirect(string $page, string $flash = ''): never
+    /* Stocke un message flash en session */
+    private function setFlash(string $type, string $message): void
     {
-        if ($flash) {
-            $_SESSION['flash'] = $flash;
-        }
+        $_SESSION['flash'] = [
+            'type'    => $type,   // 'success' | 'error'
+            'message' => $message,
+        ];
+    }
+
+    /* Redirige vers une page du projet */
+    private function redirect(string $page): never
+    {
         header("Location: index.php?page={$page}");
         exit;
     }
 
-    /** Redirige vers login si pas connecté */
-    // private function requireLogin(): void
-    // {
-    //     if (empty($_SESSION['user_id'])) {
-    //         header('Location: index.php?page=login');
-    //         exit;
-    //     }
-    // }
+    /* Redirige vers login si l'utilisateur n'est pas connecté */
+    private function requireLogin(): void
+    {
+        if (empty($_SESSION['user_id'])) {
+            $this->setFlash('error', 'Connectez-vous pour continuer.');
+            header('Location: index.php?page=login');
+            exit;
+        }
+    }
 }
