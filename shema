@@ -1,0 +1,43 @@
+marrakech-food-lovers/
+│
+├── 📄 index.php                    ← ROUTEUR PRINCIPAL (Point d'entrée)
+├── 📄 README.md                    ← Documentation
+├── 📄 .gitignore                   ← Fichiers à ignorer
+│
+├── 📂 config/                      ← CONFIGURATION
+│   ├── Database.php                ← Connexion PDO
+│   └── db.sql                      ← Création de base donnes et des tables
+│
+├── 📂 controllers/                 ← CONTRÔLEURS
+│   ├── AuthController.php          ← Gestion authentification
+│   ├── RecipeController.php        ← Gestion recettes (CRUD)
+│   └── CategoryController.php      ← Gestion catégories
+│
+├── 📂 models/                      ← MODÈLES (Classes métier)
+│   ├── User.php                    ← Logique utilisateurs
+│   ├── Recipe.php                  ← Logique recettes
+│   └── Category.php                ← Logique catégories
+│
+├── 📂 views/                       ← VUES (Interface utilisateur)
+│   ├── 📂 layouts/
+│   │   ├── header.php              ← En-tête commun
+│   │   └── footer.php              ← Pied de page commun
+│   │
+│   ├── 📂 auth/
+│   │   ├── login.php               ← Formulaire connexion
+│   │   └── register.php            ← Formulaire inscription
+│   │
+│   └── 📂 recipes/
+│       ├── index.php               ← Liste des recettes
+│       ├── create.php              ← Formulaire création
+│       ├── edit.php                ← Formulaire modification
+│       └── show.php                ← Détail d'une recette
+│
+├── 📂 public/                      ← FICHIERS PUBLICS (CSS, JS, images)
+│   ├── 📂 css/
+│   │   └── style.css               ← Styles CSS
+│   │
+│   ├── 📂 js/
+│   │   └── script.js               ← Scripts JavaScript
+│   │
+│   └── 📂 uploads/                 ← Images uploadées (si bonus)
