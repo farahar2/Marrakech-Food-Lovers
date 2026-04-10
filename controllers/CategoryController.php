@@ -33,12 +33,21 @@ class CategoryController {
             $this->model->setName($_POST['name'] ?? '');
             
             if ($this->model->create()) {
-                $_SESSION['success'] = "✅ Catégorie créée avec succès";
+                $_SESSION['flash'] = [
+                    'type' => 'success',
+                    'message' => "Catégorie créée avec succès."
+                ];
             } else {
-                $_SESSION['error'] = "❌ Erreur lors de la création";
+                $_SESSION['flash'] = [
+                    'type' => 'danger',
+                    'message' => "Erreur lors de la création."
+                ];
             }
         } catch (Exception $e) {
-            $_SESSION['error'] = $e->getMessage();
+            $_SESSION['flash'] = [
+                'type' => 'danger',
+                'message' => $e->getMessage()
+            ];
         }
         
         header('Location: index.php?action=categories');
@@ -56,7 +65,10 @@ class CategoryController {
             $category = $this->model;
             require_once __DIR__ . '/../views/categories/edit.php';
         } else {
-            $_SESSION['error'] = "Catégorie introuvable";
+            $_SESSION['flash'] = [
+                'type' => 'danger',
+                'message' => "Catégorie introuvable."
+            ];
             header('Location: index.php?action=categories');
             exit;
         }
@@ -74,15 +86,27 @@ class CategoryController {
                 $this->model->setName($_POST['name'] ?? '');
                 
                 if ($this->model->update()) {
-                    $_SESSION['success'] = "✅ Catégorie modifiée";
+                    $_SESSION['flash'] = [
+                        'type' => 'success',
+                        'message' => "Catégorie modifiée."
+                    ];
                 } else {
-                    $_SESSION['error'] = "❌ Erreur lors de la modification";
+                    $_SESSION['flash'] = [
+                        'type' => 'danger',
+                        'message' => "Erreur lors de la modification."
+                    ];
                 }
             } else {
-                $_SESSION['error'] = "❌ Catégorie introuvable";
+                $_SESSION['flash'] = [
+                    'type' => 'danger',
+                    'message' => "Catégorie introuvable."
+                ];
             }
         } catch (Exception $e) {
-            $_SESSION['error'] = $e->getMessage();
+            $_SESSION['flash'] = [
+                'type' => 'danger',
+                'message' => $e->getMessage()
+            ];
         }
         
         header('Location: index.php?action=categories');
@@ -101,12 +125,21 @@ class CategoryController {
             if (isset($_POST['confirm'])) {
                 try {
                     if ($this->model->delete()) {
-                        $_SESSION['success'] = "✅ Catégorie supprimée (les recettes liées sont maintenant sans catégorie)";
+                        $_SESSION['flash'] = [
+                            'type' => 'success',
+                            'message' => "Catégorie supprimée avec succès."
+                        ];
                     } else {
-                        $_SESSION['error'] = "❌ Erreur lors de la suppression";
+                        $_SESSION['flash'] = [
+                            'type' => 'danger',
+                            'message' => "Erreur lors de la suppression."
+                        ];
                     }
                 } catch (Exception $e) {
-                    $_SESSION['error'] = $e->getMessage();
+                    $_SESSION['flash'] = [
+                        'type' => 'danger',
+                        'message' => $e->getMessage()
+                    ];
                 }
                 header('Location: index.php?action=categories');
                 exit;
@@ -116,7 +149,10 @@ class CategoryController {
             $category = $this->model;
             require_once __DIR__ . '/../views/categories/delete.php';
         } else {
-            $_SESSION['error'] = "Catégorie introuvable";
+            $_SESSION['flash'] = [
+                'type' => 'danger',
+                'message' => "Catégorie introuvable."
+            ];
             header('Location: index.php?action=categories');
             exit;
         }

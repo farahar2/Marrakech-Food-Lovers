@@ -22,7 +22,12 @@ class RecipeController
     // List
     public function index(): void
     {
-        $recipes = $this->recipeModel->getAll();
+        $selectedCategoryId = !empty($_GET['category_id']) ? (int)$_GET['category_id'] : null;
+        $search             = !empty($_GET['search']) ? $_GET['search'] : null;
+
+        $recipes    = $this->recipeModel->getAll($selectedCategoryId, $search);
+        $categories = $this->categoryModel->getAll();
+
         require __DIR__ . '/../views/recipes/index.php';
     }
 
@@ -106,11 +111,6 @@ class RecipeController
     {
         $this->requireLogin();
 
-        // La suppression doit venir d'un formulaire POST, jamais d'un lien GET
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('recipes');
-        }
-
         $recipe = $this->recipeModel->getById($id);
 
         if (!$recipe) {
@@ -123,9 +123,15 @@ class RecipeController
             $this->redirect('recipes');
         }
 
-        $this->recipeModel->delete($id);
-        $this->setFlash('success', 'Recette supprimée.');
-        $this->redirect('recipes');
+        // Si c'est un POST avec confirmation, on supprime
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm'])) {
+            $this->recipeModel->delete($id);
+            $this->setFlash('success', 'Recette supprimée avec succès.');
+            $this->redirect('recipes');
+        }
+
+        // Sinon (GET), on affiche la page de confirmation
+        require __DIR__ . '/../views/recipes/delete.php';
     }
 
     /* Nettoie les données POST */

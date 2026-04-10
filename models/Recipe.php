@@ -11,16 +11,30 @@ class Recipe
         $this->pdo = Database::getInstance()->getConnection();
     }
 
-    /* Toutes les recettes avec auteur + catégorie */
-    public function getAll(): array
+    /* Toutes les recettes avec auteur + catégorie (filtrées par catégorie et/ou recherche) */
+    public function getAll(?int $categoryId = null, ?string $search = null): array
     {
-        $stmt = $this->pdo->query(
-            "SELECT r.*, u.username, c.name AS category_name
-             FROM   recipes r
-             JOIN   users      u ON u.id = r.user_id
-             LEFT JOIN categories c ON c.id = r.category_id
-             ORDER  BY r.created_at DESC"
-        );
+        $sql = "SELECT r.*, u.username, c.name AS category_name
+                FROM   recipes r
+                JOIN   users      u ON u.id = r.user_id
+                LEFT JOIN categories c ON c.id = r.category_id
+                WHERE 1=1";
+        
+        $params = [];
+        if ($categoryId) {
+            $sql .= " AND r.category_id = :category_id";
+            $params[':category_id'] = $categoryId;
+        }
+
+        if ($search) {
+            $sql .= " AND (r.title LIKE :search OR r.ingredients LIKE :search)";
+            $params[':search'] = "%$search%";
+        }
+
+        $sql .= " ORDER BY r.created_at DESC";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 

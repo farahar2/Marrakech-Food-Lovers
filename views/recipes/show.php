@@ -11,12 +11,7 @@ require __DIR__ . '/../layouts/header.php';
 
     <!-- ── Recipe Header ────────────────────────────────────────────── -->
     <div class="row g-5 align-items-center mb-5">
-        <div class="col-lg-5">
-            <div class="recipe-card__img-container bg-soft-green rounded-4 shadow-sm" style="height: 350px; font-size: 8rem; background: #f0f9eb;">
-                🍲
-            </div>
-        </div>
-        <div class="col-lg-7">
+        <div class="col-lg-12">
             <div class="recipe-header">
                 <?php if ($recipe['category_name']): ?>
                     <span class="badge-category mb-3 d-inline-block">
@@ -50,9 +45,7 @@ require __DIR__ . '/../layouts/header.php';
                 <?php if (!empty($_SESSION['user_id']) && (int)$_SESSION['user_id'] === (int)$recipe['user_id']): ?>
                     <div class="d-flex gap-2">
                         <a href="index.php?action=recipes_edit&id=<?= $recipe['id'] ?>" class="btn btn-outline-secondary btn-sm px-4">Modifier</a>
-                        <form method="POST" action="index.php?action=recipes_delete&id=<?= $recipe['id'] ?>" onsubmit="return confirm('Supprimer cette recette ?')">
-                            <button type="submit" class="btn btn-outline-danger btn-sm px-4">Supprimer</button>
-                        </form>
+                        <a href="index.php?action=recipes_delete&id=<?= $recipe['id'] ?>" class="btn btn-outline-danger btn-sm px-4">Supprimer</a>
                     </div>
                 <?php endif; ?>
             </div>

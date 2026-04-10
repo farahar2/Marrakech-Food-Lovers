@@ -31,6 +31,47 @@ require __DIR__ . '/../layouts/header.php';
         </a>
     </div>
 
+    <!-- ── Filtres et Recherche ────────────────────────────────────── -->
+    <div class="mb-5">
+        <div class="row g-4 align-items-center">
+            <!-- Filtres par catégorie -->
+            <div class="col-lg-8">
+                <div class="d-flex flex-wrap gap-2 align-items-center">
+                    <span class="text-muted small fw-bold me-2">Filtrer par :</span>
+                    
+                    <a href="index.php?action=recipes<?= !empty($search) ? '&search='.urlencode($search) : '' ?>" 
+                       class="btn btn-sm rounded-pill px-4 <?= is_null($selectedCategoryId) ? 'btn-primary' : 'btn-outline-secondary' ?>">
+                        Toutes
+                    </a>
+
+                    <?php foreach ($categories as $cat): ?>
+                        <a href="index.php?action=recipes&category_id=<?= $cat->getId() ?><?= !empty($search) ? '&search='.urlencode($search) : '' ?>" 
+                           class="btn btn-sm rounded-pill px-4 <?= ($selectedCategoryId === (int)$cat->getId()) ? 'btn-primary' : 'btn-outline-secondary' ?>">
+                            <?= htmlspecialchars($cat->getName()) ?>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
+            <!-- Recherche -->
+            <div class="col-lg-4">
+                <form action="index.php" method="GET" class="d-flex">
+                    <input type="hidden" name="action" value="recipes">
+                    <?php if ($selectedCategoryId): ?>
+                        <input type="hidden" name="category_id" value="<?= $selectedCategoryId ?>">
+                    <?php endif; ?>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                        <input type="text" name="search" class="form-control border-start-0 ps-0" 
+                               placeholder="Chercher une recette..." 
+                               value="<?= htmlspecialchars($search ?? '') ?>">
+                        <button class="btn btn-outline-secondary" type="submit">OK</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- ── Content ───────────────────────────────────────────────────── -->
     <?php if (empty($recipes)): ?>
         <div class="text-center py-5">
@@ -44,14 +85,7 @@ require __DIR__ . '/../layouts/header.php';
             <?php foreach ($recipes as $recipe): ?>
                 <div class="col">
                     <div class="card h-100 border-0 shadow-sm">
-                        <!-- Image Placeholder (Inspired by Manger Bouger/Healthy visual) -->
-                        <div class="recipe-card__img-container">
-                            <?php 
-                                // Simple emoji-based icon if no image
-                                $icons = ['🍲', '🥘', '🥙', '🥗', '🥣', '🍛'];
-                                echo $icons[array_rand($icons)];
-                            ?>
-                        </div>
+
 
                         <div class="card-body p-4">
                             <?php if (!empty($recipe['category_name'])): ?>
@@ -94,11 +128,9 @@ require __DIR__ . '/../layouts/header.php';
                                 <a href="index.php?action=recipes_edit&id=<?= $recipe['id'] ?>" class="btn btn-link text-muted p-0 text-decoration-none small">
                                     <i class="bi bi-pencil-square"></i> Modifier
                                 </a>
-                                <form method="POST" action="index.php?action=recipes_delete&id=<?= $recipe['id'] ?>" onsubmit="return confirm('Supprimer cette recette ?')">
-                                    <button type="submit" class="btn btn-link text-danger p-0 text-decoration-none small ms-2">
-                                        <i class="bi bi-trash"></i> Supprimer
-                                    </button>
-                                </form>
+                                <a href="index.php?action=recipes_delete&id=<?= $recipe['id'] ?>" class="btn btn-link text-danger p-0 text-decoration-none small ms-2">
+                                    <i class="bi bi-trash"></i> Supprimer
+                                </a>
                             </div>
                         <?php endif; ?>
                     </div>
