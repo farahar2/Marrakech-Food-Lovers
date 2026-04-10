@@ -23,17 +23,61 @@
 ## 📂 Structure du Projet
 
 ```text
-├── index.php                # Routeur principal (Front Controller)
-├── config/                  # Configuration (Base de données)
-├── controllers/             # Contrôleurs (Logique applicative)
-├── models/                  # Modèles (Accès aux données)
-├── views/                   # Vues (Fichiers HTML/PHP)
-│   ├── auth/                # Connexion & Inscription
-│   ├── categories/          # CRUD Catégories
-│   ├── layouts/             # Header & Footer communs
-│   └── recipes/             # CRUD Recettes
-└── public/                  # Assets (CSS, JS, Images)
+marrakech-food-lovers/
+│
+├── 📄 index.php                    ← ROUTEUR PRINCIPAL (Point d'entrée)
+├── 📄 README.md                    ← Documentation du projet
+├── 📄 .gitignore                   ← Fichiers à ignorer par Git
+├── 📄 shema                       ← Structure du projet (ce fichier)
+│
+├── 📂 config/                      ← CONFIGURATION
+│   ├── Database.php                ← Singleton de connexion PDO
+│   └── db.sql                      ← Script SQL (Base & Tables)
+│
+├── 📂 controllers/                 ← CONTRÔLEURS (Logique métier)
+│   ├── AuthController.php          ← Authentification & Sessions
+│   ├── RecipeController.php        ← Gestion des recettes (CRUD)
+│   └── CategoryController.php      ← Gestion des catégories (CRUD)
+│
+├── 📂 models/                      ← MODÈLES (Accès aux données)
+│   ├── User.php                    ← Modèle Utilisateur
+│   ├── Recipe.php                  ← Modèle Recette (avec filtres)
+│   └── Category.php                ← Modèle Catégorie
+│
+├── 📂 views/                       ← VUES (Interface utilisateur)
+│   ├── 📂 layouts/
+│   │   ├── header.php              ← Barre de navigation & CSS
+│   │   └── footer.php              ← Pied de page & Scripts
+│   │
+│   ├── 📂 auth/
+│   │   ├── login.php               ← Page de connexion
+│   │   └── register.php            ← Page d'inscription
+│   │
+│   ├── 📂 recipes/
+│   │   ├── index.php               ← Listing & Recherche
+│   │   ├── create.php              # Formulaire de création
+│   │   ├── edit.php                # Formulaire de modification
+│   │   ├── show.php                # Détails de la recette
+│   │   └── delete.php              # Confirmation de suppression
+│   │
+│   └── 📂 categories/
+│       ├── index.php               ← Listing des catégories
+│       ├── create.php              # Créer une catégorie
+│       ├── edit.php                # Modifier une catégorie
+│       └── delete.php              # Confirmation de suppression
+│
+└── 📂 public/                      ← FICHIERS STATIQUES (Assets)
+    ├── 📂 css/
+    │   └── style.css               ← Design système "Manger Bouger"
+  
 ```
+## 📊 Modélisation des données
+
+### Modèle Conceptuel de Données (MCD)
+![Schéma MCD](MCDConceptuel.webp)
+
+### Modèle Logique de Données (MLD)
+![Schéma MLD](MLDTechnique-1.webp)
 
 ## ⚙️ Installation
 
@@ -59,3 +103,5 @@ L'application suit une charte graphique orientée sur la fraîcheur et la santé
 
 ---
 *Réalisé avec ❤️ par la communauté Marrakech Food Lovers.*
+
+
