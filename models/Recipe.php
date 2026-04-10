@@ -27,8 +27,9 @@ class Recipe
         }
 
         if ($search) {
-            $sql .= " AND (r.title LIKE :search OR r.ingredients LIKE :search)";
-            $params[':search'] = "%$search%";
+            $sql .= " AND (r.title LIKE :search1 OR r.ingredients LIKE :search2)";
+            $params[':search1'] = "%$search%";
+            $params[':search2'] = "%$search%";
         }
 
         $sql .= " ORDER BY r.created_at DESC";
